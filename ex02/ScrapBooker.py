@@ -6,126 +6,75 @@
 #    By: archid- <archid-@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/19 12:16:25 by archid-           #+#    #+#              #
-#    Updated: 2023/04/19 15:17:03 by archid-          ###   ########.fr        #
+#    Updated: 2023/04/27 18:14:39 by archid-          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 import numpy as np
 from ImageProcessor import ImageProcessor
 
+
 class ScrapBooker:
-    def crop(self, array, dim, position=(0,0)):
-        """
-        Crops the image as a rectangle via dim arguments (being the new height
-        and width of the image) from the coordinates given by position arguments.
-        Args:
-        -----
-        array: numpy.ndarray
-        dim: tuple of 2 integers.
-        position: tuple of 2 integers.
-        Return:
-        -------
-        new_arr: the cropped numpy.ndarray.
-        None (if combinaison of parameters not compatible).
-        Raise:
-        ------
-        This function should not raise any Exception.
-        """
+    def crop(self, array, dim, position=(0, 0)):
         if type(array) != np.ndarray or type(dim) != tuple or type(position) != tuple:
-            raise ValueError()
+            return None
         if len(dim) != 2 or len(position) != 2:
-            raise ValueError()
+            return None
         if dim[0] > array.shape[0] or dim[0] <= 0:
-            raise ValueError()
+            return None
         if position[0] > array.shape[0] or position[0] < 0:
-            raise ValueError()
+            return None
         if dim[1] > array.shape[1] or dim[1] <= 0:
-            raise ValueError()
+            return None
         if position[1] > array.shape[1] or position[1] < 0:
-            raise ValueError()
+            return None
         y_start, y_end = position[1], position[1]+dim[1]
         x_start, x_end = position[0], position[0]+dim[0]
         if y_end > array.shape[1]:
-            raise ValueError()
+            return None
         if x_end > array.shape[0]:
-            raise ValueError()
+            return None
         return array[y_start:y_end, x_start:x_end]
 
     def thin(self, array, n, axis=0):
-        """
-        Deletes every n-th line pixels along the specified axis (0: Horizontal, 1: Vertical)
-        Args:
-        -----
-        array: numpy.ndarray.
-        n: non null positive integer lower than the number of row/column of the array
-        (depending of axis value).
-        axis: positive non null integer.
-        Return:
-        -------
-        new_arr: thined numpy.ndarray.
-        None (if combinaison of parameters not compatible).
-        Raise:
-        ------
-        This function should not raise any Exception.
-        """
-        if type(array) != np.ndarray or type(axis) != int or (axis != 0 and axis != 1) or type(n) != int or n < 0:
-            raise ValueError()
-        return np.delete(array, range(0, array.shape[axis], n))
+        if type(array) != np.ndarray or type(axis) != int or (axis != 0 and axis != 1) or type(n) != int or n <= 1:
+            return None
+        return np.delete(array, range(n, array.shape[axis], n), axis=axis)
 
     def juxtapose(self, array, n, axis=0):
-        """
-        Juxtaposes n copies of the image along the specified axis.
-        Args:
-        -----
-        array: numpy.ndarray.
-        n: positive non null integer.
-        axis: integer of value 0 or 1.
-        Return:
-        -------
-        new_arr: juxtaposed numpy.ndarray.
-        None (combinaison of parameters not compatible).
-        Raises:
-        -------
-        This function should not raise any Exception.
-        """
-        if type(array) != np.ndarray or type(axis) != int or (axis != 0 and axis != 1) or type(n) != int or n < 0:
-            raise ValueError()
+        if type(array) != np.ndarray or type(axis) != int or (axis != 0 and axis != 1) or type(n) != int or n <= 0:
+            return None
         tmp = array.copy()
         for _ in range(n):
             tmp = np.concatenate((tmp, array), axis=axis)
         return tmp
 
     def mosaic(self, array, dim):
-        """
-        Makes a grid with multiple copies of the array. The dim argument specifies
-        the number of repetition along each dimensions.
-        Args:
-        -----
-        array: numpy.ndarray.
-        dim: tuple of 2 integers.
-        Return:
-        -------
-        new_arr: mosaic numpy.ndarray.
-        None (combinaison of parameters not compatible).
-        Raises:
-        -------
-        This function should not raise any Exception.
-        """
         if type(array) != np.ndarray:
-            raise ValueError()
+            return None
         if type(dim) != tuple or len(dim) != 2:
-            raise ValueError()
+            return None
         res = self.juxtapose(array, dim[0], 0)
         res = self.juxtapose(res, dim[1], 1)
         return res
-    
+
+
 if __name__ == '__main__':
     spb = ScrapBooker()
-    arr1 = np.arange(0,25).reshape(5,5)
-    print(spb.crop(arr1, (3,1),(1,0)))
-    arr2 = np.array("A B C D E F G H I".split() * 6).reshape(-1,9)
-    print(spb.thin(arr2,3,0))
-    arr3 = np.array([[1, 2, 3],[1, 2, 3],[1, 2, 3]])
+    arr1 = np.arange(0, 25).reshape(5, 5)
+    print(spb.crop(arr1, (3, 1), (1, 0)))
+    arr2 = np.array("A B C D E F G H I".split() * 6).reshape(-1, 9)
+    print(spb.thin(arr2, 3, 0))
+    arr3 = np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
     print(spb.juxtapose(arr3, 3, 1))
     arr4 = np.array([[1, 2], [1, 2]])
-    print(spb.mosaic(arr4,))
+    print(spb.mosaic(arr4, (2, 2)))
+
+    ip = ImageProcessor()
+    img = ip.load("../beavers.jpg")
+
+    ip.display(spb.crop(img, (1200, 720), (0, 0)))
+    for i in range(1, 720, 100):
+        print(spb.thin(img, i, axis=0))
+        # ip.display()
+        # ip.display(spb.thin(img, i, axis=1))

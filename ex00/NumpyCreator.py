@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    NumPyCreator.py                                    :+:      :+:    :+:    #
+#    NumpyCreator.py                                    :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: archid- <archid-@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/18 14:17:52 by archid-           #+#    #+#              #
-#    Updated: 2023/04/19 10:21:11 by archid-          ###   ########.fr        #
+#    Updated: 2023/04/27 16:48:08 by archid-          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,18 +27,18 @@ class NumpyCreator:
         try:
             return np.asarray([x for x in iter(lst)], dtype=dtype)
         except:
-            raise TypeError()
+            return None
     
     def from_shape(self, shape, value=0, dtype=object):
         if type(shape) != tuple:
-            raise TypeError()
+            return None
         arr = np.empty(shape, dtype=dtype)
         arr.fill(value)
         return arr
 
     def random(self, shape, dtype=object):
         if type(shape) != tuple:
-            raise TypeError()
+            return None
         arr = np.empty(shape, dtype=dtype)
         for i in range(len(arr)):
             arr[i] = np.random.rand()
@@ -46,7 +46,7 @@ class NumpyCreator:
     
     def identity(self, n, dtype=object):
         if type(n) != int:
-            raise TypeError()
+            return None
         arr = self.from_shape((n, n), dtype=dtype)
         for i in range(n):
             arr[i, i] = 1
@@ -57,11 +57,9 @@ if __name__ == '__main__':
     npc.from_list([[1,2,3],[6,3,4]])
     npc.from_list([[1,2,3],[6,4]])
     npc.from_list([[1,2,3],['a','b','c'],[6,4,7]])
-
     npc.from_list(((1,2),(3,4)))
 
     npc.from_tuple(("a", "b", "c"))
-
     npc.from_tuple(["a", "b", "c"])
 
     npc.from_iterable(range(5))

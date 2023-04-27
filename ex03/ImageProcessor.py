@@ -6,7 +6,7 @@
 #    By: archid- <archid-@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/19 10:21:27 by archid-           #+#    #+#              #
-#    Updated: 2023/04/19 15:34:30 by archid-          ###   ########.fr        #
+#    Updated: 2023/04/27 19:12:46 by archid-          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ class ImageProcessor:
     def display(self, array):
         plt.imshow(array)
         plt.show()
-    
+
 if __name__ == '__main__':
     ImageProcessor.load('foo')
     arr = ImageProcessor.load('beavers.jpg')
