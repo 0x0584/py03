@@ -6,7 +6,7 @@
 #    By: archid- <archid-@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/19 12:16:25 by archid-           #+#    #+#              #
-#    Updated: 2023/04/27 18:14:39 by archid-          ###   ########.fr        #
+#    Updated: 2023/05/01 06:23:05 by archid-          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,29 +52,30 @@ class ScrapBooker:
     def mosaic(self, array, dim):
         if type(array) != np.ndarray:
             return None
-        if type(dim) != tuple or len(dim) != 2:
+        if type(dim) != tuple or len(dim) != 2 or dim[0] < 1 or dim[1] < 1:
             return None
-        res = self.juxtapose(array, dim[0], 0)
-        res = self.juxtapose(res, dim[1], 1)
+        res = self.juxtapose(array, dim[0] - 1, 0) if dim[0] > 1 else array
+        if dim[1] > 1:            
+            res = self.juxtapose(res, dim[1] - 1, 1)
         return res
 
 
 if __name__ == '__main__':
     spb = ScrapBooker()
-    arr1 = np.arange(0, 25).reshape(5, 5)
-    print(spb.crop(arr1, (3, 1), (1, 0)))
-    arr2 = np.array("A B C D E F G H I".split() * 6).reshape(-1, 9)
-    print(spb.thin(arr2, 3, 0))
-    arr3 = np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
-    print(spb.juxtapose(arr3, 3, 1))
-    arr4 = np.array([[1, 2], [1, 2]])
-    print(spb.mosaic(arr4, (2, 2)))
-
     ip = ImageProcessor()
-    img = ip.load("../beavers.jpg")
 
-    ip.display(spb.crop(img, (1200, 720), (0, 0)))
-    for i in range(1, 720, 100):
-        print(spb.thin(img, i, axis=0))
-        # ip.display()
-        # ip.display(spb.thin(img, i, axis=1))
+    img = ip.load("../beavers.jpg")
+    croped = spb.crop(img, (200, 200), (500, 500))
+    ip.display(croped)
+
+    ip.display(spb.thin(croped, 5))
+    ip.display(spb.thin(croped, 50))
+
+    ip.display(spb.juxtapose(croped, 3, axis=0))
+    ip.display(spb.juxtapose(croped, 3, axis=1))
+
+    ip.display(spb.mosaic(croped, (1,1)))
+    ip.display(spb.mosaic(croped, (1,2)))
+    ip.display(spb.mosaic(croped, (2,2)))
+    ip.display(spb.mosaic(croped, (2,1)))
+    
